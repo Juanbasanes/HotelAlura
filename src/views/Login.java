@@ -4,6 +4,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import jdbc.controller.AdministradoresController;
+import jdbc.dao.AdministradoresDAO;
+import jdbc.factory.ConnectionFactory;
+import jdbc.modelo.Administradores;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,7 +23,12 @@ import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
+@SuppressWarnings("unused")
 public class Login extends JFrame {
 
 	/**
@@ -235,18 +246,22 @@ public class Login extends JFrame {
 	}
 	
 	private void Login() {
-		 String Usuario= "admin";
-	     String Contraseña="admin";
+		// Obtener el nombre de usuario y la contraseña ingresados
+	    String usuario = txtUsuario.getText();
+	    String contrasena = new String(txtContrasena.getPassword());
 
-	        String contrase=new String (txtContrasena.getPassword());
-
-	        if(txtUsuario.getText().equals(Usuario) && contrase.equals(Contraseña)){
-	            MenuUsuario menu = new MenuUsuario();
-	            menu.setVisible(true);
-	            dispose();	 
-	        }else {
-	            JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
-	        }
+	    // Autenticar al usuario con la base de datos
+	    AdministradoresController administradoresController = new AdministradoresController();
+	    Administradores administrador = administradoresController.login(usuario, contrasena);
+	    if (administrador != null) {
+	        // El nombre de usuario y la contraseña son válidos
+	        MenuUsuario menu = new MenuUsuario();
+	        menu.setVisible(true);
+	        dispose();
+	    } else {
+	        // El nombre de usuario o la contraseña no son válidos
+	    	JOptionPane.showMessageDialog(null, "Usuario o Contraseña no válidos", "Intenta de Nuevo", JOptionPane.WARNING_MESSAGE);
+	    }
 	} 
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
